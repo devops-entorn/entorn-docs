@@ -15,6 +15,7 @@
 - Docker Desktop amb Kubernetes / Rancher Desktop.
 - Helm.
 
+> **Abans de començar, assegura't que el sistema Windows no té CAP actualització pendent de fer**.
 
 ### Instal·lació de WSL v2
 
@@ -46,10 +47,47 @@ Obrim Microsoft Store i cerquem _Ubuntu_.
 
 Descarreguem i instal·lem Ubuntu per a WSL.
 
-Un cop instal·lat des del Microsoft Store, cal arrencar l’Ubuntu (clicar a Launch) perquè s’acabi d’instal·lar: **Haureu de crear un usuari per a Ubuntu**. 
+Un cop instal·lat des del Microsoft Store, cal arrencar l’Ubuntu (clicar a Launch) perquè s’acabi d’instal·lar: **Haureu de crear un usuari per a Ubuntu**. Habitualment, aquest usuari es crearà quan s'obri el terminal d'Ubuntu per primera vegada. 
 
 _Nota: recordeu la contrasenya que establiu per a l'usuari, la necessitareu._
 
+> **Atenció**: en alguns casos, Ubuntu s'autoconfigura inicialment amb l'usuari _**root**_. Això ho podreu saber si en obrir un terminal d'Ubuntu, el símbol del prompt és un ``#`` enlloc d'un ``$`` (aquest darrer símbol correspon a la resta d'usuaris).
+> Si l'Ubuntu s'obre amb l'usuari _**root**_ com a usuari per defecte, ho heu de canviar fent les següents passes:
+
+1. Al terminal d'Ubuntu, i estant com a _**root**_, heu de crear un nou usuari amb la següent comanda:
+
+```
+adduser nomdusuari
+```
+on ``nomdusuari`` pot ser qualsevol, però es recomana que sigui el mateix que el nom d'usuari que teniu a github.
+
+Us demanarà una contrasenya, i les següents preguntes no les contesteu, simplement doneu a Enter.
+
+2. A continuació, executeu la següent comanda:
+
+```
+usermod -aG sudo nomdusuari
+```
+
+on ``nomdusuari`` és el nom d'usuari de l'usuari que heu creat al pas anterior.
+
+Aquesta comanda dona permisos d'administració a l'usuari ``nomdusuari``.
+
+3. Tanqueu el terminal d'Ubuntu. Ara, a un **PowerShell com a administrador**, executeu la següent comanda:
+
+```
+ubuntu config --default-user nomdusuari
+```
+
+on ``nomdusuari`` és el nom d'usuari de l'usuari que heu creat abans.
+
+4. Ara, obriu un terminal d'Ubuntu i comproveu que se us obre amb un prompt com aquest:
+
+```
+nodusuari@nompc:~$
+```
+
+Ara ja podem seguir:
 
 **Recomanable**: Executem la següent comanda a un PowerShell com a administrador:
 
@@ -172,6 +210,8 @@ cd /mnt/d/entorn/klocal-ddesk-jbe-min
 ./entorn-start.sh
 ```
 
+**Atenció**: heu de comprovar que en executar aquests scripts no dóna cap error. En determinades circumstàncies, es podem trobar amb un error del tipus _l'usuari nomdusuari no pertany al fitxer de sudoers_ (o similar). Si es dóna aquest cas, consulteu el final d'aquest document per a saber com resoldre'l.
+
 ### Actualització de l'Entorn
 
 Si voleu actualitzar l'entorn, cal tornar a clonar el repositori amb ``git clone`` (perquè pugui clonar caldrà eliminar primer el directori de la versió antiga), i un cop clonat, executar de nou els scripts:
@@ -229,4 +269,30 @@ Per a poder solucionar aquest problema, cal executar en un terminal bash d'Ubunt
 entorn reset
 ``` 
 
+### Quan executo un script d'instal·lació té lloc un error de tipus "_l'usuari no s'ha trobat al fitxer de sudoers_"
+
+Solució:
+
+1. Tanqueu el terminal d'Ubuntu.
+2. Obriu un PowerShell com a administrador i executeu:
+
+```
+ubuntu config --default-user root
+```
+
+3. Obriu el terminal d'Ubuntu i executeu:
+
+```
+usermod -aG sudo nomdusuari
+```
+
+on ``nomdusuari`` és el nom d'usuari de l'usuari vostre.
+
+4. Tanqueu el terminal d'Ubuntu. Obriu un PowerShell com a administrador i executeu:
+
+```
+ubuntu config --default-user nomdusuari
+```
+
+Ara ja podeu obrir el terminal d'Ubuntu i continuar amb la instal·lació de l'Entorn, executant els scripts ``entorn-pull.sh``, ``entorn-install.sh`` i ``entorn-start.sh`` tal i com s'explica en l'apartat d'**Instal·lació de l'Entorn**.
 
